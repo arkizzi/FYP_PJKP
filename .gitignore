@@ -70,3 +70,17 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Ignore audio files
+*.mp3
+*.wav
+*.ogg
+
+# Ignore all files and directories
+*
+
+# Except for directories
+!*/
+
+# Except for script files
+!*.cs
