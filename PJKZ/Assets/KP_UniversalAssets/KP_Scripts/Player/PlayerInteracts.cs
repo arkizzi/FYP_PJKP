@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerInteracts : MonoBehaviour
 {
@@ -20,20 +21,20 @@ public class PlayerInteracts : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && SceneManager.GetActiveScene().name == "AquaticMedley")
         {
             //handle initial press
-            PlayTapSound();
+            AMTapSound();
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && SceneManager.GetActiveScene().name == "AquaticMedley")
         {
             //handle release
             playerScore.HandleTap();
         }
     }
 
-    void PlayTapSound()
+    void AMTapSound()
     {
         //check if the AudioSource is present
         if (audioSource != null)
