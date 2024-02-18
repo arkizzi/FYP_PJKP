@@ -6,7 +6,7 @@ public class PlayerAccuracyIndicators : MonoBehaviour
 {
     public List<SpriteRenderer> accuracySprites;
     public float growScale = 1.1f;
-    public float animationDuration = 0.15f;
+    public float animationDuration = 0.1f;
     public float fadeOutDuration = 0.15f;
     private Coroutine scaleCoroutine;
 

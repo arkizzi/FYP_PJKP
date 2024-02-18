@@ -4,29 +4,50 @@ using UnityEngine;
 
 public class PenkieChirpIndication : MonoBehaviour
 {
-    public SimpleBeatDetection beatProcessor;
+    public SimpleBeatDetection beatProcessor1;
+    public SimpleBeatDetection beatProcessor2; 
     public Animator animator;
-    public bool toChirpOrNotToChirp = false;
-    private bool beatDetected = false;
 
-        void Start()
+    private bool canTriggerDoubleChirping = true; //chokehold for the double chirp (to prevent it from being spammed)
+
+    private Coroutine resetAnimationCoroutine1;
+    private Coroutine resetAnimationCoroutine2;
+
+    void Start()
     {
-        beatProcessor.OnBeat += OnBeat;
-        beatDetected = false; 
+        beatProcessor1.OnBeat += OnBeat1; 
+        beatProcessor2.OnBeat += OnBeat2; 
     }
 
-    void Update()
+
+    void OnBeat1()
     {
-        if (!beatDetected)
+        animator.SetBool("IsChirping", true); //trigger animation for beat detection 1
+        if (resetAnimationCoroutine1 != null)
+            StopCoroutine(resetAnimationCoroutine1);
+        resetAnimationCoroutine1 = StartCoroutine(ResetAnimation("IsChirping", 1));
+    }
+
+    void OnBeat2()
+    {
+        if (canTriggerDoubleChirping)
         {
-            animator.SetBool("IsChirping", false);
+            animator.SetBool("IsDoubleChriping", true);
+            canTriggerDoubleChirping = false; //the chokehold
+            if (resetAnimationCoroutine2 != null)
+                StopCoroutine(resetAnimationCoroutine2);
+            resetAnimationCoroutine2 = StartCoroutine(ResetAnimation("IsDoubleChriping", 2));
         }
     }
 
-    void OnBeat()
+    IEnumerator ResetAnimation(string parameterName, int processorNumber)
     {
-        beatDetected = true; 
-        animator.SetBool("IsChirping", true);
-        beatDetected = false;
+        yield return new WaitForSeconds(0.1f);
+        animator.SetBool(parameterName, false);
+        if (processorNumber == 1)
+            yield break; 
+        else if (processorNumber == 2)
+            yield return new WaitForSeconds(1f); //coolddown to minimize spam
+        canTriggerDoubleChirping = true;
     }
 }
