@@ -33,6 +33,12 @@ public class PlayerAccuracyIndicators : MonoBehaviour
         //activate sprite based on the accuracy index
         if (accuracyIndex >= 0 && accuracyIndex < accuracySprites.Count)
         {
+            // Stop existing scaling coroutine before starting a new one
+            if (scaleCoroutine != null)
+            {
+                StopCoroutine(scaleCoroutine);
+            }
+
             accuracySprites[accuracyIndex].enabled = true;
             StartCoroutine(AnimateAccuracySprite(accuracySprites[accuracyIndex]));
         }
