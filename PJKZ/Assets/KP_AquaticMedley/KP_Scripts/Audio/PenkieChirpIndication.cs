@@ -7,6 +7,7 @@ public class PenkieChirpIndication : MonoBehaviour
     public SimpleBeatDetection beatProcessor1;
     public SimpleBeatDetection beatProcessor2; 
     public Animator animator;
+    public bool GoodFishSpawn = false;
 
     private bool canTriggerDoubleChirping = true; //chokehold for the double chirp (to prevent it from being spammed)
 
@@ -22,6 +23,7 @@ public class PenkieChirpIndication : MonoBehaviour
 
     void OnBeat1()
     {
+        GoodFishSpawn = true;
         animator.SetBool("IsChirping", true); //trigger animation for beat detection 1
         if (resetAnimationCoroutine1 != null)
             StopCoroutine(resetAnimationCoroutine1);
@@ -43,6 +45,7 @@ public class PenkieChirpIndication : MonoBehaviour
     IEnumerator ResetAnimation(string parameterName, int processorNumber)
     {
         yield return new WaitForSeconds(0.1f);
+        GoodFishSpawn = false;
         animator.SetBool(parameterName, false);
         if (processorNumber == 1)
             yield break; 
