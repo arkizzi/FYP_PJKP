@@ -10,6 +10,7 @@ public class PlayerScore : MonoBehaviour
     public float resetTime = 0.5f;
     public int score;
     public bool missedFish = false;
+    public bool successFish = false;
     
     private float lastTapTime;
 
@@ -37,24 +38,28 @@ public class PlayerScore : MonoBehaviour
 
             if (timingDifference < 0.1f)
             {
+                successFish = true;
                 score += 500;
                 playerAccuracyIndicators.DisplayAccuracySprite(0);
                 Debug.Log("Perfect!");
             }
             else if (timingDifference < 0.2f)
             {
+                successFish = true;
                 score += 100;
                 playerAccuracyIndicators.DisplayAccuracySprite(1);
                 Debug.Log("Good!");
             }
             else if (timingDifference < 0.3f)
             {
+                successFish = true;
                 score += 50;
                 playerAccuracyIndicators.DisplayAccuracySprite(2);
                 Debug.Log("Bad!");
             }
             else
             {
+                missedFish = true;
                 score += 0;
                 playerAccuracyIndicators.DisplayAccuracySprite(3);
                 Debug.Log("Miss!");
@@ -104,7 +109,7 @@ public class PlayerScore : MonoBehaviour
 
     IEnumerator MissNoTapAfterDelay()
     {
-        yield return new WaitForSeconds(0.55f);
+        yield return new WaitForSeconds(0.6f);
         missedFish = true;
         MissNoTap();
     }

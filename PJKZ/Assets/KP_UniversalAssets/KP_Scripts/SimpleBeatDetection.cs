@@ -27,7 +27,8 @@ public class SimpleBeatDetection : MonoBehaviour {
 	// The type of window we are going to apply at the Spectrum
 	public FFTWindow FFTWindow;
 
-	private int beatCount; //I added this
+	// Flag to track if a beat has been detected in the current beat cycle
+    private bool beatDetectedThisCycle = false;
 
 	void Start () {
 
@@ -37,41 +38,45 @@ public class SimpleBeatDetection : MonoBehaviour {
 		historyBuffer = new float[43];
 	}
 
-	void Update () {
+    void Update () {
 
 		// Get the instant energy of the song this frame
-		float instantEnergy = GetInstantEnergy ();
+        float instantEnergy = GetInstantEnergy ();
 
 		// Use the History Buffer to compute the average energy of the sound the past 1 second
 		// Refer to reference to more info
-		float localAverageEnergy = GetLocalAverageEnergy ();
+        float localAverageEnergy = GetLocalAverageEnergy ();
 
 		// Compute the variance with the history buffer and the average energy
-		float varianceEnergies = ComputeVariance (localAverageEnergy);
+        float varianceEnergies = ComputeVariance (localAverageEnergy);
 
 		// Use the linear equation described in the reference to compute the constant C
-		double constantC = (-0.0025714 * varianceEnergies) + 1.5142857;
+        double constantC = (-0.0025714 * varianceEnergies) + 1.5142857;
 
 		// Shift the history buffer one position to the right
 		// Save it in another array
-		float[] shiftedHistoryBuffer = ShiftArray (historyBuffer, 1);
+        float[] shiftedHistoryBuffer = ShiftArray (historyBuffer, 1);
 
 		// Make the first position to be our instantEnergy
-		shiftedHistoryBuffer [0] = instantEnergy;
+        shiftedHistoryBuffer [0] = instantEnergy;
 
 		// Override the elements of the new array on the old one
-		OverrideElementsToAnotherArray (shiftedHistoryBuffer, historyBuffer);
+        OverrideElementsToAnotherArray (shiftedHistoryBuffer, historyBuffer);
 
-		// Ask if a beat has been done
-		if (instantEnergy > constantC * localAverageEnergy) {
-			// Beat!
-			if(OnBeat != null)
-				OnBeat();
-				beatCount++; //I added this
-		}
+        // Check if the current energy exceeds the threshold and a beat has not been detected in this cycle
+        if (instantEnergy > constantC * localAverageEnergy && !beatDetectedThisCycle) {
+            // Beat detected
+            if(OnBeat != null)
+                OnBeat();
 
-
-	}
+            beatDetectedThisCycle = true; // Set flag to true to indicate a beat has been detected
+        }
+        // Reset the flag if the energy falls below the threshold
+        else if (instantEnergy <= constantC * localAverageEnergy) {
+            // Reset the flag as no beat is detected
+            beatDetectedThisCycle = false;
+        }
+    }
 
 	#region FOR_SIMPLE_ALGORITHM_USE
 	public float GetInstantEnergy(){
@@ -145,11 +150,6 @@ public class SimpleBeatDetection : MonoBehaviour {
 		}
 		return s;
 	}
-
-    public int GetBeatCount()
-    {
-        return beatCount;
-    }
 	
 	#endregion
 	

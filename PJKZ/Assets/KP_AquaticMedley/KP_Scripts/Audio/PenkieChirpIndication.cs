@@ -6,6 +6,8 @@ public class PenkieChirpIndication : MonoBehaviour
 {
     public SimpleBeatDetection beatProcessor1;
     public SimpleBeatDetection beatProcessor2; 
+    public FishSpawn fishSpawn;
+    public PlayerScore playerScore;
     public Animator animator;
     public bool GoodFishSpawn = false;
 
@@ -13,6 +15,7 @@ public class PenkieChirpIndication : MonoBehaviour
 
     private Coroutine resetAnimationCoroutine1;
     private Coroutine resetAnimationCoroutine2;
+    private Coroutine fadeOutCoroutine;
 
     void Start()
     {
@@ -23,11 +26,14 @@ public class PenkieChirpIndication : MonoBehaviour
 
     void OnBeat1()
     {
+        fishSpawn.DisplayFish();
         GoodFishSpawn = true;
         animator.SetBool("IsChirping", true); //trigger animation for beat detection 1
         if (resetAnimationCoroutine1 != null)
             StopCoroutine(resetAnimationCoroutine1);
         resetAnimationCoroutine1 = StartCoroutine(ResetAnimation("IsChirping", 1));
+
+        fadeOutCoroutine = StartCoroutine(ResetFishAfterDelay());
     }
 
     void OnBeat2()
@@ -52,5 +58,22 @@ public class PenkieChirpIndication : MonoBehaviour
         else if (processorNumber == 2)
             yield return new WaitForSeconds(1f); //coolddown to minimize spam
         canTriggerDoubleChirping = true;
+    }
+
+    IEnumerator ResetFishAfterDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        
+        if (fishSpawn.fishSprite.enabled)
+        {
+            if (playerScore.missedFish == true)
+            {
+                StartCoroutine(fishSpawn.FadeOutSprite(fishSpawn.fishSprite));
+            }
+            else if (playerScore.successFish == true)
+            {
+                StartCoroutine(fishSpawn.GrowAndFadeOutSprite(fishSpawn.fishSprite));
+            }
+        }
     }
 }
