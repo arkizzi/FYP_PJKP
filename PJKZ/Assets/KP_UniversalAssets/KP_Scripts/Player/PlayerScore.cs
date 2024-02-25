@@ -36,21 +36,21 @@ public class PlayerScore : MonoBehaviour
 
             float timingDifference = Mathf.Abs(Time.time - lastTapTime);
 
-            if (timingDifference < 0.1f)
+            if (timingDifference < 0.2f)
             {
                 successFish = true;
                 score += 500;
                 playerAccuracyIndicators.DisplayAccuracySprite(0);
                 Debug.Log("Perfect!");
             }
-            else if (timingDifference < 0.2f)
+            else if (timingDifference < 0.3f)
             {
                 successFish = true;
                 score += 100;
                 playerAccuracyIndicators.DisplayAccuracySprite(1);
                 Debug.Log("Good!");
             }
-            else if (timingDifference < 0.3f)
+            else if (timingDifference < 0.4f)
             {
                 successFish = true;
                 score += 50;

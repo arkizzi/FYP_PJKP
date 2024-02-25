@@ -9,13 +9,11 @@ public class PenkieChirpIndication : MonoBehaviour
     public FishSpawn fishSpawn;
     public PlayerScore playerScore;
     public Animator animator;
-    public bool GoodFishSpawn = false;
-
     private bool canTriggerDoubleChirping = true; //chokehold for the double chirp (to prevent it from being spammed)
 
     private Coroutine resetAnimationCoroutine1;
     private Coroutine resetAnimationCoroutine2;
-    private Coroutine fadeOutCoroutine;
+    private Coroutine FishGoByeCoroutine;
 
     void Start()
     {
@@ -27,13 +25,12 @@ public class PenkieChirpIndication : MonoBehaviour
     void OnBeat1()
     {
         fishSpawn.DisplayFish();
-        GoodFishSpawn = true;
         animator.SetBool("IsChirping", true); //trigger animation for beat detection 1
         if (resetAnimationCoroutine1 != null)
             StopCoroutine(resetAnimationCoroutine1);
         resetAnimationCoroutine1 = StartCoroutine(ResetAnimation("IsChirping", 1));
 
-        fadeOutCoroutine = StartCoroutine(ResetFishAfterDelay());
+        FishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay());
     }
 
     void OnBeat2()
@@ -51,7 +48,6 @@ public class PenkieChirpIndication : MonoBehaviour
     IEnumerator ResetAnimation(string parameterName, int processorNumber)
     {
         yield return new WaitForSeconds(0.1f);
-        GoodFishSpawn = false;
         animator.SetBool(parameterName, false);
         if (processorNumber == 1)
             yield break; 
@@ -68,11 +64,11 @@ public class PenkieChirpIndication : MonoBehaviour
         {
             if (playerScore.missedFish == true)
             {
-                StartCoroutine(fishSpawn.FadeOutSprite(fishSpawn.fishSprite));
+                fishSpawn.FadeOutFish();
             }
             else if (playerScore.successFish == true)
             {
-                StartCoroutine(fishSpawn.GrowAndFadeOutSprite(fishSpawn.fishSprite));
+                fishSpawn.GrowAndFadeOutFish();
             }
         }
     }

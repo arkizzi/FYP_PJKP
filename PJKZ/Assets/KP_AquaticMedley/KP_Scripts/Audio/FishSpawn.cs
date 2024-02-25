@@ -5,11 +5,8 @@ public class FishSpawn : MonoBehaviour
 {
     public SpriteRenderer fishSprite;
     public PlayerScore playerScore;
-    public PenkieChirpIndication penkieChirpIndication;
-    public float growScale = 1.1f;
-    public float animationDuration = 0.1f;
-    public float fadeOutDuration = 0.15f;
-    private Coroutine scaleCoroutine;
+    public Animator FishAnimator;
+    private Coroutine EntranceCoroutine;
 
     void Start()
     {
@@ -18,7 +15,9 @@ public class FishSpawn : MonoBehaviour
 
     public void DisableFishSprite()
     {
-        fishSprite.enabled = false;
+        FishAnimator.SetBool("IsSingularBeatDetected?", false);
+        FishAnimator.SetBool("SingularBeatMiss?", false);
+        FishAnimator.SetBool("SingularBeatSuccess?", false);
     }
 
     public void DisplayFish()
@@ -26,82 +25,40 @@ public class FishSpawn : MonoBehaviour
         DisableFishSprite(); // First, disable all sprites
 
         // Stop existing scaling coroutine before starting a new one
-        if (scaleCoroutine != null)
+        if (EntranceCoroutine != null)
         {
-            StopCoroutine(scaleCoroutine);
+            StopCoroutine(EntranceCoroutine);
         }
 
         fishSprite.enabled = true;
-        StartCoroutine(AnimateFishIn(fishSprite));
+        AnimateFishIn();
     }
 
-    public IEnumerator AnimateFishIn(SpriteRenderer spriteRenderer)
+    public void AnimateFishIn()
     {
-        Vector3 originalScale = spriteRenderer.transform.localScale;
-        Vector3 targetScale = originalScale * growScale;
-
-        float elapsedTime = 0f;
-        while (elapsedTime < animationDuration)
-        {
-            spriteRenderer.transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsedTime / animationDuration);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        spriteRenderer.transform.localScale = originalScale; // Reset to original scale   
+        FishAnimator.SetBool("IsSingularBeatDetected?", true);
+        FishAnimator.SetBool("FishIdle?", true);
     }
 
-    public IEnumerator FadeOutSprite(SpriteRenderer spriteRenderer)
+    public void FadeOutFish()
     {
-        Color originalColor = spriteRenderer.color;
-
-        float elapsedTime = 0f;
-        while (elapsedTime < fadeOutDuration)
+        if(FishAnimator.GetBool("IsSingularBeatDetected?"))
         {
-            float alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeOutDuration);
-            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            FishAnimator.SetBool("IsSingularBeatDetected?", false);
         }
 
-        spriteRenderer.color = originalColor; // Reset to original color
-        spriteRenderer.enabled = false; // Disable the sprite after fading out
+        FishAnimator.SetBool("SingularBeatMiss?", true);
         playerScore.missedFish = false;
     }
 
-    public IEnumerator GrowAndFadeOutSprite(SpriteRenderer spriteRenderer)
+    public void GrowAndFadeOutFish()
     {
-        Color originalColor = spriteRenderer.color;
-        Vector3 ogScale = spriteRenderer.transform.localScale;
-        Vector3 targetScale = ogScale * growScale;
-
-        float growElapsedTime = 0f;
-        float fadeElapsedTime = 0f; // Added variable for fade animation
-
-        while (growElapsedTime < animationDuration || fadeElapsedTime < fadeOutDuration)
+        if(FishAnimator.GetBool("IsSingularBeatDetected?"))
         {
-            // Calculate grow factor
-            float growFactor = Mathf.Min(1f, growElapsedTime / animationDuration);
-
-            // Update scale
-            spriteRenderer.transform.localScale = Vector3.Lerp(ogScale, targetScale, growFactor);
-
-            // Update fade
-            float alpha = Mathf.Lerp(1f, 0f, fadeElapsedTime / fadeOutDuration);
-            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-
-            // Increment timers
-            growElapsedTime += Time.deltaTime;
-            fadeElapsedTime += Time.deltaTime;
-
-            yield return null;
+            FishAnimator.SetBool("IsSingularBeatDetected?", false);
         }
 
-        spriteRenderer.color = originalColor; // Reset to original color
-        spriteRenderer.transform.localScale = ogScale/growScale; // Reset to original scale
-        spriteRenderer.enabled = false; // Disable the sprite after fading out
-        playerScore.successFish = false;
+        FishAnimator.SetBool("SingularBeatSuccess?", true);
+        playerScore.missedFish = false;
     }
-
-
 }
