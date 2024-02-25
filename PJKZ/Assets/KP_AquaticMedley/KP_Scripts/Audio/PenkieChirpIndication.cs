@@ -6,14 +6,17 @@ public class PenkieChirpIndication : MonoBehaviour
 {
     public SimpleBeatDetection beatProcessor1;
     public SimpleBeatDetection beatProcessor2; 
-    public FishSpawn fishSpawn;
+    public GFFishSpawn gfFishSpawn;
+    public BFFishSpawn bfFishASpawn;
+    public BFFishSpawn bfFishBSpawn;
     public PlayerScore playerScore;
     public Animator animator;
     private bool canTriggerDoubleChirping = true; //chokehold for the double chirp (to prevent it from being spammed)
-
-    private Coroutine resetAnimationCoroutine1;
-    private Coroutine resetAnimationCoroutine2;
-    private Coroutine FishGoByeCoroutine;
+    private Coroutine Anim1Coroutine;
+    private Coroutine Anim2Coroutine;
+    private Coroutine GoodFishGoByeCoroutine;
+    private Coroutine BadFishAGoByeCoroutine;
+    private Coroutine BadFishBGoByeCoroutine;
 
     void Start()
     {
@@ -21,27 +24,32 @@ public class PenkieChirpIndication : MonoBehaviour
         beatProcessor2.OnBeat += OnBeat2; 
     }
 
-
     void OnBeat1()
     {
-        fishSpawn.DisplayFish();
+        gfFishSpawn.DisplayFish();
         animator.SetBool("IsChirping", true); //trigger animation for beat detection 1
-        if (resetAnimationCoroutine1 != null)
-            StopCoroutine(resetAnimationCoroutine1);
-        resetAnimationCoroutine1 = StartCoroutine(ResetAnimation("IsChirping", 1));
+        if (Anim1Coroutine != null)
+            StopCoroutine(Anim1Coroutine);
+        Anim1Coroutine = StartCoroutine(ResetAnimation("IsChirping", 1));
 
-        FishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay());
+        GoodFishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay());
     }
 
     void OnBeat2()
     {
         if (canTriggerDoubleChirping)
         {
+            bfFishASpawn.DisplayFish();
+            bfFishBSpawn.DisplayFish();
+
             animator.SetBool("IsDoubleChriping", true);
             canTriggerDoubleChirping = false; //the chokehold
-            if (resetAnimationCoroutine2 != null)
-                StopCoroutine(resetAnimationCoroutine2);
-            resetAnimationCoroutine2 = StartCoroutine(ResetAnimation("IsDoubleChriping", 2));
+            if (Anim2Coroutine != null)
+                StopCoroutine(Anim2Coroutine);
+            Anim2Coroutine = StartCoroutine(ResetAnimation("IsDoubleChriping", 2));
+
+            BadFishAGoByeCoroutine = StartCoroutine(ResetBadFishAAfterDelay());
+            BadFishBGoByeCoroutine = StartCoroutine(ResetBadFishABfterDelay());
         }
     }
 
@@ -60,15 +68,49 @@ public class PenkieChirpIndication : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         
-        if (fishSpawn.fishSprite.enabled)
+        if (gfFishSpawn.GFFishAnimator.GetBool("FishIdle?"))
         {
             if (playerScore.missedFish == true)
             {
-                fishSpawn.FadeOutFish();
+                gfFishSpawn.FadeOutFish();
             }
             else if (playerScore.successFish == true)
             {
-                fishSpawn.GrowAndFadeOutFish();
+                gfFishSpawn.GrowAndFadeOutFish();
+            }
+        }
+    }
+
+    IEnumerator ResetBadFishAAfterDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        
+        if (bfFishASpawn.BFFishAnimator.GetBool("FishIdle?"))
+        {
+            if (playerScore.missedFish == true)
+            {
+                bfFishASpawn.FadeOutFish();
+            }
+            else if (playerScore.successFish == true)
+            {
+                bfFishASpawn.GrowAndFadeOutFish();
+            }
+        }
+    }
+
+    IEnumerator ResetBadFishABfterDelay()
+    {
+        yield return new WaitForSeconds(1f + bfFishBSpawn.animationDelay);
+        
+        if (bfFishBSpawn.BFFishAnimator.GetBool("FishIdle?"))
+        {
+            if (playerScore.missedFish == true)
+            {
+                bfFishBSpawn.FadeOutFish();
+            }
+            else if (playerScore.successFish == true)
+            {
+                bfFishBSpawn.GrowAndFadeOutFish();
             }
         }
     }
