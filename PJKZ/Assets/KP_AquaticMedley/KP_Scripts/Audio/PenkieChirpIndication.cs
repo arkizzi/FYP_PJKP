@@ -6,17 +6,15 @@ public class PenkieChirpIndication : MonoBehaviour
 {
     public SimpleBeatDetection beatProcessor1;
     public SimpleBeatDetection beatProcessor2; 
-    public GFFishSpawn gfFishSpawn;
-    public BFFishSpawn bfFishASpawn;
-    public BFFishSpawn bfFishBSpawn;
+    public FishSpawn goodFishSpawn;
+    public FishSpawn badFishSpawn;
     public PlayerScore playerScore;
     public Animator animator;
     private bool canTriggerDoubleChirping = true; //chokehold for the double chirp (to prevent it from being spammed)
     private Coroutine Anim1Coroutine;
     private Coroutine Anim2Coroutine;
     private Coroutine GoodFishGoByeCoroutine;
-    private Coroutine BadFishAGoByeCoroutine;
-    private Coroutine BadFishBGoByeCoroutine;
+    private Coroutine BadFishGoByeCoroutine;
 
     void Start()
     {
@@ -26,30 +24,31 @@ public class PenkieChirpIndication : MonoBehaviour
 
     void OnBeat1()
     {
-        gfFishSpawn.DisplayFish();
+        goodFishSpawn.DisplayFish();
+
         animator.SetBool("IsChirping", true); //trigger animation for beat detection 1
         if (Anim1Coroutine != null)
             StopCoroutine(Anim1Coroutine);
+
         Anim1Coroutine = StartCoroutine(ResetAnimation("IsChirping", 1));
 
-        GoodFishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay());
+        GoodFishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay(goodFishSpawn));
     }
 
     void OnBeat2()
     {
+        badFishSpawn.DisplayFish();
+
         if (canTriggerDoubleChirping)
         {
-            bfFishASpawn.DisplayFish();
-            bfFishBSpawn.DisplayFish();
-
             animator.SetBool("IsDoubleChriping", true);
             canTriggerDoubleChirping = false; //the chokehold
             if (Anim2Coroutine != null)
                 StopCoroutine(Anim2Coroutine);
+                
             Anim2Coroutine = StartCoroutine(ResetAnimation("IsDoubleChriping", 2));
 
-            BadFishAGoByeCoroutine = StartCoroutine(ResetBadFishAAfterDelay());
-            BadFishBGoByeCoroutine = StartCoroutine(ResetBadFishABfterDelay());
+            BadFishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay(badFishSpawn));
         }
     }
 
@@ -64,54 +63,21 @@ public class PenkieChirpIndication : MonoBehaviour
         canTriggerDoubleChirping = true;
     }
 
-    IEnumerator ResetFishAfterDelay()
+    IEnumerator ResetFishAfterDelay(FishSpawn fishSpawn)
     {
         yield return new WaitForSeconds(1f);
-        
-        if (gfFishSpawn.GFFishAnimator.GetBool("FishIdle?"))
+
+        if (fishSpawn.FishAnimator.GetBool("FishIdle?"))
         {
             if (playerScore.missedFish == true)
             {
-                gfFishSpawn.FadeOutFish();
+                fishSpawn.FadeOutFish();
             }
             else if (playerScore.successFish == true)
             {
-                gfFishSpawn.GrowAndFadeOutFish();
+                fishSpawn.GrowAndFadeOutFish();
             }
         }
     }
 
-    IEnumerator ResetBadFishAAfterDelay()
-    {
-        yield return new WaitForSeconds(1f);
-        
-        if (bfFishASpawn.BFFishAnimator.GetBool("FishIdle?"))
-        {
-            if (playerScore.missedFish == true)
-            {
-                bfFishASpawn.FadeOutFish();
-            }
-            else if (playerScore.successFish == true)
-            {
-                bfFishASpawn.GrowAndFadeOutFish();
-            }
-        }
-    }
-
-    IEnumerator ResetBadFishABfterDelay()
-    {
-        yield return new WaitForSeconds(1f + bfFishBSpawn.animationDelay);
-        
-        if (bfFishBSpawn.BFFishAnimator.GetBool("FishIdle?"))
-        {
-            if (playerScore.missedFish == true)
-            {
-                bfFishBSpawn.FadeOutFish();
-            }
-            else if (playerScore.successFish == true)
-            {
-                bfFishBSpawn.GrowAndFadeOutFish();
-            }
-        }
-    }
 }
