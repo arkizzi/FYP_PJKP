@@ -10,11 +10,6 @@ public class BeatPreCalculator : MonoBehaviour
     private float lastBeatTime;
     public float beatCooldown = 1.0f;
 
-    public List<float> GetBeatTimestamps()
-    {
-        return beatTimestamps;
-    }
-
     public void AnalyzeAudioClip()
     {
         if (audioSource == null || audioSource.clip == null)
@@ -26,7 +21,7 @@ public class BeatPreCalculator : MonoBehaviour
         float[] samples = new float[audioSource.clip.samples * audioSource.clip.channels];
         audioSource.clip.GetData(samples, 0);
 
-        int bufferSize = 1024; // Adjust according to your needs
+        int bufferSize = 2048; // Adjust according to your needs
         int numBuffers = samples.Length / bufferSize;
 
         float[] instantEnergies = new float[numBuffers];
@@ -54,7 +49,8 @@ public class BeatPreCalculator : MonoBehaviour
         {
             if (instantEnergies[i] > constantC * localAverageEnergy)
             {
-                float currentTime = i * bufferSize / (float)audioSource.clip.frequency;
+                float currentTime = (float)i * bufferSize / (float)audioSource.clip.frequency;
+
 
                 // Check if enough time has passed since the last beat
                 if (currentTime - lastBeatTime >= beatCooldown)

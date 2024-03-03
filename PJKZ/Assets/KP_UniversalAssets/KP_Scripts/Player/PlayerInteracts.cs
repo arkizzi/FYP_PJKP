@@ -44,7 +44,7 @@ void Update()
     {
         AMTapSound();
         //playerScore.HandleTap();
-        //playerScoreTest.CalculateTapAccuracy();
+        playerScoreTest.CheckAccuracy();
         tapHandled = true;
     }
     else if (Input.touchCount == 0)
