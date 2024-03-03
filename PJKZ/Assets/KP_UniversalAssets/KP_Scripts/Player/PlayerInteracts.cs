@@ -20,38 +20,22 @@ public class PlayerInteracts : MonoBehaviour
         }
     }
 
-// private bool tapHandled = false;
+    private bool tapHandled = false;
 
-// void Update()
-// {
-//     if (Input.GetKeyDown(KeyCode.Mouse0) && SceneManager.GetActiveScene().name == "AquaticMedley" && !tapHandled)
-//     {
-//         AMTapSound();
-//         playerScore.HandleTap();
-//         tapHandled = true;
-//     }
-//     else if (Input.GetKeyUp(KeyCode.Mouse0))
-//     {
-//         tapHandled = false;
-//     }
-// }
-
-private bool tapHandled = false;
-
-void Update()
-{
-    if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && SceneManager.GetActiveScene().name == "AquaticMedley" && !tapHandled)
+    void Update()
     {
-        AMTapSound();
-        //playerScore.HandleTap();
-        playerScoreTest.CheckAccuracy();
-        tapHandled = true;
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && SceneManager.GetActiveScene().name == "AquaticMedley" && !tapHandled)
+        {
+            AMTapSound();
+            playerScoreTest.CheckAccuracy();
+            tapHandled = true;
+        }
+        else if (Input.touchCount == 0)
+        {
+            playerScoreTest.MissAccuracy();
+            tapHandled = false;
+        }
     }
-    else if (Input.touchCount == 0)
-    {
-        tapHandled = false;
-    }
-}
 
 
     void AMTapSound()
