@@ -38,9 +38,14 @@ public class SimpleBeatDetection : MonoBehaviour {
 		historyBuffer = new float[43];
 	}
 
-    void Update () {
+    void Update () 
+	{
+		BeatDetection();
+    }
 
-		// Get the instant energy of the song this frame
+	public void BeatDetection()
+	{
+				// Get the instant energy of the song this frame
         float instantEnergy = GetInstantEnergy ();
 
 		// Use the History Buffer to compute the average energy of the sound the past 1 second
@@ -76,7 +81,7 @@ public class SimpleBeatDetection : MonoBehaviour {
             // Reset the flag as no beat is detected
             beatDetectedThisCycle = false;
         }
-    }
+	}
 
 	#region FOR_SIMPLE_ALGORITHM_USE
 	public float GetInstantEnergy(){
@@ -97,7 +102,7 @@ public class SimpleBeatDetection : MonoBehaviour {
 		return result;
 	}
 
-	private float GetLocalAverageEnergy(){
+	public float GetLocalAverageEnergy(){
 		float result = 0; 
 
 		// Refer to reference: <E> = sum(E[i]^2) / 43
@@ -110,7 +115,7 @@ public class SimpleBeatDetection : MonoBehaviour {
 		return result / historyBuffer.Length;
 	}
 
-	private float ComputeVariance(float _averageEnery){
+	public float ComputeVariance(float _averageEnery){
 		float result = 0; 
 
 		// Refer to reference: V = sum( (E[i] - <E>)^2 ) / 43

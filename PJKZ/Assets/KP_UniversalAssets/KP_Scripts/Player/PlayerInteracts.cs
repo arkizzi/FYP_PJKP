@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class PlayerInteracts : MonoBehaviour
 {
     public AudioSource audioSource;
+    public NewPlayerScoreTest playerScoreTest;
     private PlayerScore playerScore;
 
     void Start()
@@ -19,20 +20,39 @@ public class PlayerInteracts : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0) && SceneManager.GetActiveScene().name == "AquaticMedley")
-        {
-            //handle initial press
-            AMTapSound();
-        }
+// private bool tapHandled = false;
 
-        if (Input.GetMouseButtonUp(0) && SceneManager.GetActiveScene().name == "AquaticMedley")
-        {
-            //handle release
-            playerScore.HandleTap();
-        }
+// void Update()
+// {
+//     if (Input.GetKeyDown(KeyCode.Mouse0) && SceneManager.GetActiveScene().name == "AquaticMedley" && !tapHandled)
+//     {
+//         AMTapSound();
+//         playerScore.HandleTap();
+//         tapHandled = true;
+//     }
+//     else if (Input.GetKeyUp(KeyCode.Mouse0))
+//     {
+//         tapHandled = false;
+//     }
+// }
+
+private bool tapHandled = false;
+
+void Update()
+{
+    if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && SceneManager.GetActiveScene().name == "AquaticMedley" && !tapHandled)
+    {
+        AMTapSound();
+        //playerScore.HandleTap();
+        //playerScoreTest.CalculateTapAccuracy();
+        tapHandled = true;
     }
+    else if (Input.touchCount == 0)
+    {
+        tapHandled = false;
+    }
+}
+
 
     void AMTapSound()
     {

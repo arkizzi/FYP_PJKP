@@ -6,7 +6,7 @@ public class PlayerScore : MonoBehaviour
 {
     public SimpleBeatDetection beatProcessor;
     public PlayerAccuracyIndicators playerAccuracyIndicators;
-    public float tapThreshold = 0.4f;
+    public float tapThreshold = 1.0f;
     public float resetTime = 0.5f;
     public int score;
     public bool missedFish = false;
@@ -18,7 +18,7 @@ public class PlayerScore : MonoBehaviour
     private Coroutine missNoTapCoroutine;
 
     void Start()
-    {
+    {        
         beatProcessor.OnBeat += OnBeat;
         score = 0;
     }
@@ -28,41 +28,39 @@ public class PlayerScore : MonoBehaviour
     {
         if (IsTapOnBeat())
         {
-            //stop miss no tap
-            if (missNoTapCoroutine != null)
-            {
-                StopCoroutine(missNoTapCoroutine);
-            }
-
             float timingDifference = Mathf.Abs(Time.time - lastTapTime);
 
-            if (timingDifference < 0.2f)
+            if (timingDifference < 0.5f)
             {
-                successFish = true;
                 score += 500;
                 playerAccuracyIndicators.DisplayAccuracySprite(0);
+                successFish = true;
                 Debug.Log("Perfect!");
             }
-            else if (timingDifference < 0.3f)
+            else if (timingDifference < 0.6f)
             {
-                successFish = true;
                 score += 100;
                 playerAccuracyIndicators.DisplayAccuracySprite(1);
+                successFish = true;
                 Debug.Log("Good!");
             }
-            else if (timingDifference < 0.4f)
+            else if (timingDifference < 0.7f)
             {
-                successFish = true;
                 score += 50;
                 playerAccuracyIndicators.DisplayAccuracySprite(2);
+                successFish = true;
                 Debug.Log("Bad!");
+            }
+            else if (timingDifference > 0.8f)
+            {
+                score += 0;
+                playerAccuracyIndicators.DisplayAccuracySprite(3);
+                missedFish = true;
+                Debug.Log("Miss!");
             }
             else
             {
-                missedFish = true;
-                score += 0;
-                playerAccuracyIndicators.DisplayAccuracySprite(3);
-                Debug.Log("Miss!");
+                Debug.Log("this aint supposed to happen");
             }
 
             Debug.Log("Score: " + score);
@@ -83,6 +81,7 @@ public class PlayerScore : MonoBehaviour
         // Handle case where no tap is detected
         score += 0;
         playerAccuracyIndicators.DisplayAccuracySprite(3); // Display Miss indicator
+        missedFish = true;
         Debug.Log("Miss!");
         Debug.Log("Score: " + score);
         
@@ -97,22 +96,28 @@ public class PlayerScore : MonoBehaviour
 
     void OnBeat()
     {
+        missedFish = false;
+        successFish = false;
         lastTapTime = Time.fixedTime;
 
+    // if (Input.touchCount == 0)
+    // {
+    //     MissNoTap();
+    // }
+
         // Start the coroutine to trigger MissNoTap after 2 seconds
-        if (missNoTapCoroutine != null)
-        {
-            StopCoroutine(missNoTapCoroutine);
-        }
-        missNoTapCoroutine = StartCoroutine(MissNoTapAfterDelay());
+        // if (missNoTapCoroutine != null)
+        // {
+        //     StopCoroutine(missNoTapCoroutine);
+        // }
+        // missNoTapCoroutine = StartCoroutine(MissNoTapAfterDelay());
     }
 
-    IEnumerator MissNoTapAfterDelay()
-    {
-        yield return new WaitForSeconds(0.6f);
-        missedFish = true;
-        MissNoTap();
-    }
+    // IEnumerator MissNoTapAfterDelay()
+    // {
+    //     yield return new WaitForSeconds(0.6f);
+    //     MissNoTap();
+    // }
 
     bool IsTapOnBeat()
     {
