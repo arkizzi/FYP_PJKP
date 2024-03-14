@@ -4,80 +4,31 @@ using UnityEngine;
 
 public class PenkieChirpIndication : MonoBehaviour
 {
-    public SimpleBeatDetection beatProcessor1;
-    public SimpleBeatDetection beatProcessor2; 
-    public FishSpawn goodFishSpawn;
-    public FishSpawn badFishSpawn;
-    public PlayerScore playerScore;
+    public SimpleBeatDetection BeatDetector;
     public Animator animator;
-    private bool canTriggerDoubleChirping = true; //chokehold for the double chirp (to prevent it from being spammed)
     private Coroutine Anim1Coroutine;
-    private Coroutine Anim2Coroutine;
-    private Coroutine GoodFishGoByeCoroutine;
-    private Coroutine BadFishGoByeCoroutine;
 
     void Start()
     {
-        beatProcessor1.OnBeat += OnBeat1; 
-        beatProcessor2.OnBeat += OnBeat2; 
+        BeatDetector.OnBeat += OnBeat; 
     }
 
-    void OnBeat1()
+    void OnBeat()
     {
-        goodFishSpawn.DisplayFish();
-
-        animator.SetBool("IsChirping", true); //trigger animation for beat detection 1
+        animator.SetBool("IsDoubleChriping", true); //trigger animation for beat detection 1
         if (Anim1Coroutine != null)
             StopCoroutine(Anim1Coroutine);
 
-        Anim1Coroutine = StartCoroutine(ResetAnimation("IsChirping", 1));
-
-        GoodFishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay(goodFishSpawn));
+        Anim1Coroutine = StartCoroutine(ResetAnimation("IsDoubleChriping"));
     }
 
-    void OnBeat2()
+
+    IEnumerator ResetAnimation(string parameterName)
     {
-        badFishSpawn.DisplayFish();
-
-        if (canTriggerDoubleChirping)
-        {
-            animator.SetBool("IsDoubleChriping", true);
-            canTriggerDoubleChirping = false; //the chokehold
-            if (Anim2Coroutine != null)
-                StopCoroutine(Anim2Coroutine);
-                
-            Anim2Coroutine = StartCoroutine(ResetAnimation("IsDoubleChriping", 2));
-
-            BadFishGoByeCoroutine = StartCoroutine(ResetFishAfterDelay(badFishSpawn));
-        }
-    }
-
-    IEnumerator ResetAnimation(string parameterName, int processorNumber)
-    {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.125f);
         animator.SetBool(parameterName, false);
-        if (processorNumber == 1)
-            yield break; 
-        else if (processorNumber == 2)
-            yield return new WaitForSeconds(1f); //coolddown to minimize spam
-        canTriggerDoubleChirping = true;
-    }
+        yield break; 
 
-    IEnumerator ResetFishAfterDelay(FishSpawn fishSpawn)
-    {
-        yield return new WaitForSeconds(1f);
-
-        if (fishSpawn.FishAnimator.GetBool("FishIdle?"))
-        {
-            if (playerScore.missedFish == true)
-            {
-                fishSpawn.FadeOutFish();
-            }
-            else if (playerScore.successFish == true)
-            {
-                fishSpawn.GrowAndFadeOutFish();
-            }
-        }
     }
 
 }

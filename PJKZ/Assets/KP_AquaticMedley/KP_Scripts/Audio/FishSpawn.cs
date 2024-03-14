@@ -3,27 +3,29 @@ using UnityEngine;
 
 public class FishSpawn : MonoBehaviour
 {
-    public PlayerScore playerScore;
+    public SimpleBeatDetection BeatDetector;
     public Animator FishAnimator;
+    public bool isSecondFish;
     private Coroutine EntranceCoroutine;
 
     void Start()
     {
-        DisableFishSprite(); // Disable sprite on start
+        BeatDetector.OnBeat += OnBeat; 
     }
 
-    public void DisableFishSprite()
+    void OnBeat()
     {
-        FishAnimator.SetBool("IsSingularBeatDetected?", false);
-        FishAnimator.SetBool("SingularBeatMiss?", false);
-        FishAnimator.SetBool("SingularBeatSuccess?", false);
-        FishAnimator.SetBool("FishIdle?", false);
+        if (isSecondFish)
+        {
+            StartCoroutine(SecondFishSpawn()); // Start the coroutine
+        }
+        else
+        {
+            DisplayFish();
+        }
     }
-
     public void DisplayFish()
     {
-        DisableFishSprite(); // First, disable all sprites
-
         // Stop existing scaling coroutine before starting a new one
         if (EntranceCoroutine != null)
         {
@@ -31,35 +33,38 @@ public class FishSpawn : MonoBehaviour
         }
 
         AnimateFishIn();
+        //add a condition when the player taps 
+        StartCoroutine(FadeOutAfterDelay());
+    }
+
+    IEnumerator SecondFishSpawn()
+    {
+        yield return new WaitForSeconds(0.106f);
+        DisplayFish();
+    }
+
+    IEnumerator FadeOutAfterDelay()
+    {
+        yield return new WaitForSeconds(1.5f); // Wait for 1 second
+        FadeOutFish(); // Call FadeOutFish after the delay
     }
 
     public void AnimateFishIn()
     {
-        FishAnimator.SetBool("IsSingularBeatDetected?", true);
-        FishAnimator.SetBool("FishIdle?", true);
+        FishAnimator.SetBool("GoodFishSuccess", false);
+        FishAnimator.SetBool("GoodFishMiss", false);
+        FishAnimator.SetBool("GoodFishAppears", true);
     }
 
     public void FadeOutFish()
     {
-        if(FishAnimator.GetBool("IsSingularBeatDetected?"))
-        {
-            FishAnimator.SetBool("IsSingularBeatDetected?", false);
-        }
-
-        FishAnimator.SetBool("SingularBeatMiss?", true);
-        FishAnimator.SetBool("SingularBeatSuccess?", false);
-        playerScore.missedFish = false;
+        FishAnimator.SetBool("GoodFishMiss", true);
+        FishAnimator.SetBool("GoodFishAppears", false);
     }
 
     public void GrowAndFadeOutFish()
     {
-        if(FishAnimator.GetBool("IsSingularBeatDetected?"))
-        {
-            FishAnimator.SetBool("IsSingularBeatDetected?", false);
-        }
-
-        FishAnimator.SetBool("SingularBeatSuccess?", true);
-        FishAnimator.SetBool("SingularBeatMiss?", false);
-        playerScore.successFish = false;
+        FishAnimator.SetBool("GoodFishSuccess", true);
+        FishAnimator.SetBool("GoodFishAppears", false);
     }
 }
