@@ -6,6 +6,7 @@ public class FishSpawn : MonoBehaviour
     public SimpleBeatDetection BeatDetector;
     public Animator FishAnimator;
     public bool isSecondFish;
+    public PlayerInteracts sucessor;
     private Coroutine EntranceCoroutine;
 
     void Start()
@@ -13,11 +14,39 @@ public class FishSpawn : MonoBehaviour
         BeatDetector.OnBeat += OnBeat; 
     }
 
+    void Update()
+    {
+        if (sucessor.successTap)
+        {
+            
+            if (sucessor.fishSpawnCount == 2 && isSecondFish)
+            {
+                GrowAndFadeOutFish();
+            }
+            else if (sucessor.fishSpawnCount == 1 && !isSecondFish)
+            {
+                GrowAndFadeOutFish();
+            }
+        }
+        
+        if (sucessor.failTap)
+        {
+            if (sucessor.fishSpawnCount == 2 && isSecondFish)
+            {
+                StartCoroutine(FadeOutAfterDelay()); 
+            }
+            else if (sucessor.fishSpawnCount == 1 && !isSecondFish)
+            {
+                StartCoroutine(FadeOutAfterDelay()); 
+            }
+        }
+    }
+
     void OnBeat()
     {
         if (isSecondFish)
         {
-            StartCoroutine(SecondFishSpawn()); // Start the coroutine
+            StartCoroutine(SecondFishSpawn(DisplayFish)); 
         }
         else
         {
@@ -33,20 +62,18 @@ public class FishSpawn : MonoBehaviour
         }
 
         AnimateFishIn();
-        //add a condition when the player taps 
-        StartCoroutine(FadeOutAfterDelay());
     }
 
-    IEnumerator SecondFishSpawn()
+    IEnumerator SecondFishSpawn(System.Action method)
     {
-        yield return new WaitForSeconds(0.106f);
-        DisplayFish();
+        yield return new WaitForSeconds(0.375f);
+        method();
     }
 
     IEnumerator FadeOutAfterDelay()
     {
-        yield return new WaitForSeconds(1.5f); // Wait for 1 second
-        FadeOutFish(); // Call FadeOutFish after the delay
+        yield return new WaitForSeconds(1f); 
+        FadeOutFish();
     }
 
     public void AnimateFishIn()
@@ -60,11 +87,13 @@ public class FishSpawn : MonoBehaviour
     {
         FishAnimator.SetBool("GoodFishMiss", true);
         FishAnimator.SetBool("GoodFishAppears", false);
+        sucessor.failTap = false;
     }
 
     public void GrowAndFadeOutFish()
     {
         FishAnimator.SetBool("GoodFishSuccess", true);
         FishAnimator.SetBool("GoodFishAppears", false);
+        sucessor.successTap = false;
     }
 }

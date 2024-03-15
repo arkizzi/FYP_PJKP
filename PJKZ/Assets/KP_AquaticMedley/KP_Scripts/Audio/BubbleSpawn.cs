@@ -6,6 +6,7 @@ public class BubbleSpawn : MonoBehaviour
     public SimpleBeatDetection BeatDetector;
     public Animator bubbleAnim;
     public bool isSecondBubble;
+    public PlayerInteracts sucessor;
     private Coroutine EntranceCoroutine;
 
     void Start()
@@ -13,11 +14,38 @@ public class BubbleSpawn : MonoBehaviour
         BeatDetector.OnBeat += OnBeat; 
     }
 
+    void Update()
+    {
+        if (sucessor.successTap)
+        {
+            if (sucessor.fishSpawnCount == 2 && isSecondBubble)
+            {
+                BubblePop();
+            }
+            else if (sucessor.fishSpawnCount == 1 && !isSecondBubble)
+            {
+                BubblePop();
+            }
+        }
+        
+        if (sucessor.failTap)
+        {
+            if (sucessor.fishSpawnCount == 2 && isSecondBubble)
+            {
+                StartCoroutine(DissapearAfterDelay()); 
+            }
+            else if (sucessor.fishSpawnCount == 1 && !isSecondBubble)
+            {
+                StartCoroutine(DissapearAfterDelay()); 
+            }
+        }
+    }
+
     void OnBeat()
     {
         if (isSecondBubble)
         {
-            StartCoroutine(SecondBubbleSpawn()); // Start the coroutine
+            StartCoroutine(SecondBubbleSpawn(DisplayBubble)); // Start the coroutine
         }
         else
         {
@@ -33,19 +61,17 @@ public class BubbleSpawn : MonoBehaviour
         }
 
         SpawnBubble();
-        //add a condition when the player taps 
-        StartCoroutine(DissapearAfterDelay());
     }
 
-    IEnumerator SecondBubbleSpawn()
+    IEnumerator SecondBubbleSpawn(System.Action method)
     {
-        yield return new WaitForSeconds(0.106f);
-        DisplayBubble();
+        yield return new WaitForSeconds(0.375f);
+        method();
     }
 
     IEnumerator DissapearAfterDelay()
     {
-        yield return new WaitForSeconds(1.5f); // Wait for 1 second
+        yield return new WaitForSeconds(1f); // Wait for 1 second
         FadeOutBubble(); // Call FadeOutFish after the delay
     }
 
