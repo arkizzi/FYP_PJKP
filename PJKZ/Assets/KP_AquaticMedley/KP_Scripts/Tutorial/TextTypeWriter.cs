@@ -7,6 +7,7 @@ public class TextTypeWriter : MonoBehaviour
 {
     public bool textDisplayed;
     public Text text;
+    public CheckPointIndicators checkPoints;
     private string Lines;
     private int LineNoChecker;
 
@@ -20,12 +21,10 @@ public class TextTypeWriter : MonoBehaviour
     {
         Lines = "Tap on beat AFTER you hear Penkie's chirps!";
 
-        // LineNoChecker += LineNoChecker;
-
-        // if (LineNoChecker > 0)
-        // {
-        //     Lines = "Good Job!";
-        // }
+        if (checkPoints.correctCount >= 6)
+        {
+            Lines = "Good Job!";
+        }
     }
 
     IEnumerator TypeWriterProcess(string scent)

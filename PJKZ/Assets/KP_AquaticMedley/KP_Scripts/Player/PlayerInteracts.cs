@@ -11,6 +11,7 @@ public class PlayerInteracts : MonoBehaviour
     public PlayerAccuracyIndicators accSpritePrompter;
     public bool successTap = false;
     public bool failTap = false;
+    public bool tutCheck = false;
     public int fishSpawnCount = 0;
 
     private float time_after_beat = 0;
@@ -45,6 +46,7 @@ public class PlayerInteracts : MonoBehaviour
                     Debug.Log("Perfect!");
                     fishSpawnCount = fishSpawnCount + 1;
                     successTap = true;
+                    tutCheck = true;
                     startTime = false;
                 }
                 else if (time_after_beat < max_time_before_great)
@@ -54,6 +56,7 @@ public class PlayerInteracts : MonoBehaviour
                     Debug.Log("Great!");
                     fishSpawnCount = fishSpawnCount + 1;
                     successTap = true;
+                    tutCheck = true;
                     startTime = false;
                 }
                 else if (time_after_beat < max_time_before_fail)
@@ -63,6 +66,7 @@ public class PlayerInteracts : MonoBehaviour
                     Debug.Log("Bad!");
                     fishSpawnCount = fishSpawnCount + 1;
                     successTap = true;
+                    tutCheck = true;
                     startTime = false;
                 }
                 else

@@ -11,7 +11,9 @@ public class MainTutorial : MonoBehaviour
     public DarkerBGTut dbg;
     public AudioSource PenkieChirps;
     public AudioSource PopBeats;
-    private int markerCounter = 0;
+    public CheckPointIndicators checkPoints;
+    
+    private int markerCounter = 1;
     private bool beatDetect = false;
     private float lastBeatTime = 0f; 
     private bool chirpsAndBeatsRunning = false; 
@@ -24,11 +26,12 @@ public class MainTutorial : MonoBehaviour
     void OnBeat()
     {
         float currentTime = Time.time;
-        if (currentTime - lastBeatTime > 3.5f) 
+        if (currentTime - lastBeatTime > 3f) 
         {
             markerCounter++;
             lastBeatTime = currentTime; 
-            if (!chirpsAndBeatsRunning && markerCounter >= 2) 
+            
+            if (!chirpsAndBeatsRunning && markerCounter >= 3 && checkPoints.correctCount < 6) 
             {
                 StartCoroutine(ChirpsAndBeats());
             }
@@ -37,12 +40,19 @@ public class MainTutorial : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(chirpsAndBeatsRunning);
+        //Debug.Log(markerCounter);
         if (textprompter.textDisplayed)
         {
             kiz.animTut.SetBool("KizLeave?", true);
             db.animBox.SetBool("DBLeave?", true);
             dbg.dbgTut.SetBool("LeaveDarkBG?", true);
+            textprompter.textDisplayed = false;
+            textprompter.enabled = false;
+        }
+
+        if (checkPoints.correctCount >= 6)
+        {
+
         }
     }
 
