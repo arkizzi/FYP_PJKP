@@ -19,7 +19,13 @@ public class DialogueBox : MonoBehaviour
         if (checkPoints.correctCount >= 6)
         {
             textprompter.enabled = true;
-            animBox.SetBool("DBLeave?", false);
+            StartCoroutine(AnimWithTImer());
         }
+    }
+
+    IEnumerator AnimWithTImer()
+    {
+        yield return new WaitForSeconds(2.00f);
+        animBox.SetBool("DBLeave?", false);
     }
 }

@@ -9,7 +9,7 @@ public class TextTypeWriter : MonoBehaviour
     public Text text;
     public CheckPointIndicators checkPoints;
     private string Lines;
-    private int LineNoChecker;
+    public int LineNoChecker;
 
     void OnEnable()
     {
@@ -20,10 +20,12 @@ public class TextTypeWriter : MonoBehaviour
     void LineChanger()
     {
         Lines = "Tap on beat AFTER you hear Penkie's chirps!";
+        LineNoChecker = 1;
 
         if (checkPoints.correctCount >= 6)
         {
             Lines = "Good Job!";
+            LineNoChecker = 2;
         }
     }
 

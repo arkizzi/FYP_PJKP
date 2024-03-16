@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class MainTutorial : MonoBehaviour
@@ -14,7 +15,6 @@ public class MainTutorial : MonoBehaviour
     public CheckPointIndicators checkPoints;
     
     private int markerCounter = 1;
-    private bool beatDetect = false;
     private float lastBeatTime = 0f; 
     private bool chirpsAndBeatsRunning = false; 
 
@@ -31,7 +31,7 @@ public class MainTutorial : MonoBehaviour
             markerCounter++;
             lastBeatTime = currentTime; 
             
-            if (!chirpsAndBeatsRunning && markerCounter >= 3 && checkPoints.correctCount < 6) 
+            if (!chirpsAndBeatsRunning && markerCounter >= 3 && checkPoints.correctCount < 6 && kiz.animTut.GetBool("KizLeave?")) 
             {
                 StartCoroutine(ChirpsAndBeats());
             }
@@ -41,7 +41,7 @@ public class MainTutorial : MonoBehaviour
     void Update()
     {
         //Debug.Log(markerCounter);
-        if (textprompter.textDisplayed)
+        if (textprompter.textDisplayed && textprompter.LineNoChecker == 1)
         {
             kiz.animTut.SetBool("KizLeave?", true);
             db.animBox.SetBool("DBLeave?", true);
@@ -50,9 +50,9 @@ public class MainTutorial : MonoBehaviour
             textprompter.enabled = false;
         }
 
-        if (checkPoints.correctCount >= 6)
+        if (textprompter.LineNoChecker == 2)
         {
-
+            StartCoroutine(SwitchScene("AquaticMedley"));
         }
     }
 
@@ -83,4 +83,11 @@ public class MainTutorial : MonoBehaviour
         PenkieChirps.enabled = false;
         PopBeats.enabled = false;
     }
+
+    IEnumerator SwitchScene(string sceneName)
+    {
+        yield return new WaitForSeconds(4.0f);
+        SceneManager.LoadScene(sceneName);
+    }
+
 }

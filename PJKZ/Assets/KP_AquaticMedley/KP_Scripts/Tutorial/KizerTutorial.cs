@@ -16,7 +16,13 @@ public class KizerTutorial : MonoBehaviour
     {
         if (checkPoints.correctCount >= 6)
         {
-            animTut.SetBool("KizLeave?", false);
+        StartCoroutine(AnimWithTImer());
         }
+    }
+
+    IEnumerator AnimWithTImer()
+    {
+        yield return new WaitForSeconds(2.00f);
+        animTut.SetBool("KizLeave?", false);
     }
 }
