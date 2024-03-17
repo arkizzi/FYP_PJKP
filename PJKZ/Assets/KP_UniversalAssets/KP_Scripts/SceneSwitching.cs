@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneSwitching : MonoBehaviour
 {
+    public Animator LoadingAnimator;
+
     public void changeScene(string scene)
     {
         StartCoroutine(SwitchScene(scene));
@@ -12,7 +14,8 @@ public class SceneSwitching : MonoBehaviour
 
     IEnumerator SwitchScene(string sceneName)
     {
-        yield return new WaitForSeconds(1.5f);
+        LoadingAnimator.SetBool("LeavingScene?", true);
+        yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(sceneName);
     }
 }

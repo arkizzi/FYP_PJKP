@@ -1,16 +1,15 @@
 using System.Collections;
 using UnityEngine;
 
-public class FishSpawn : MonoBehaviour
+public class FishZap : MonoBehaviour
 {
     public SimpleBeatDetection BeatDetector;
-    public BubbleSpawn bubble;
     public Animator FishAnimator;
     public bool isSecondFish;
     public PlayerInteracts sucessor;
     private Coroutine EntranceCoroutine;
 
-    void Start()
+    void OnEnable()
     {
         BeatDetector.OnBeat += OnBeat; 
     }
@@ -23,12 +22,10 @@ public class FishSpawn : MonoBehaviour
             if (sucessor.fishSpawnCount == 2 && isSecondFish)
             {
                 GrowAndFadeOutFish();
-                bubble.BubblePop();
             }
             else if (sucessor.fishSpawnCount == 1 && !isSecondFish)
             {
                 GrowAndFadeOutFish();
-                bubble.BubblePop();
             }
         }
         
@@ -37,12 +34,10 @@ public class FishSpawn : MonoBehaviour
             if (sucessor.fishSpawnCount == 2 && isSecondFish)
             {
                 StartCoroutine(FadeOutAfterDelay()); 
-                bubble.StartCoroutine(bubble.DissapearAfterDelay()); 
             }
             else if (sucessor.fishSpawnCount == 1 && !isSecondFish)
             {
                 StartCoroutine(FadeOutAfterDelay()); 
-                StartCoroutine(bubble.DissapearAfterDelay()); 
             }
         }
     }
@@ -84,20 +79,20 @@ public class FishSpawn : MonoBehaviour
     public void AnimateFishIn()
     {
         FishAnimator.SetBool("GoodFishSuccess", false);
-        FishAnimator.SetBool("GoodFishMiss", false);
+        FishAnimator.SetBool("FishZapped", false);
         FishAnimator.SetBool("GoodFishAppears", true);
     }
 
     public void FadeOutFish()
     {
-        FishAnimator.SetBool("GoodFishMiss", true);
+        FishAnimator.SetBool("FishZapped", true);
         FishAnimator.SetBool("GoodFishAppears", false);
         sucessor.failTap = false;
     }
 
     public void GrowAndFadeOutFish()
     {
-        FishAnimator.SetBool("GoodFishSuccess", true);
+        FishAnimator.SetBool("FishZapped", true);
         FishAnimator.SetBool("GoodFishAppears", false);
         sucessor.successTap = false;
     }

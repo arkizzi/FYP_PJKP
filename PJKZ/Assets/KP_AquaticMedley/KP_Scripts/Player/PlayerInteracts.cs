@@ -5,7 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class PlayerInteracts : MonoBehaviour
 {
+    public LayerMask targetLayer;
     public AudioSource popAudio;
+    public AudioSource zapAudio;
     public AudioSource missAudio;
     public SimpleBeatDetection BeatDetector;
     public PlayerAccuracyIndicators accSpritePrompter;
@@ -102,20 +104,35 @@ public class PlayerInteracts : MonoBehaviour
 
     void PopTapSound()
     {
-        //check if the AudioSource is present
-        if (popAudio != null)
+        if (IsLayerActiveInHierarchy(targetLayer))
         {
-            //play the audio clip attached to the AudioSource
+            zapAudio.Play();
+        }
+        else
+        {
             popAudio.Play();
         }
     }
 
+    bool IsLayerActiveInHierarchy(LayerMask layerMask)
+    {
+        // Get all GameObjects in the scene
+        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+
+        foreach (GameObject obj in allObjects)
+        {
+            if (((1 << obj.layer) & layerMask) != 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void MissTapSound()
     {
-        //check if the AudioSource is present
         if (missAudio != null)
         {
-            //play the audio clip attached to the AudioSource
             missAudio.Play();
         }
     }

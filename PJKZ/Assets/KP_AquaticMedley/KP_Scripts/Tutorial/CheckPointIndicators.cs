@@ -10,7 +10,7 @@ public class CheckPointIndicators : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("correctCount: " + correctCount);
+        //Debug.Log("correctCount: " + correctCount);
         
         if (pi.tutCheck)
         {

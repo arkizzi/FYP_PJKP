@@ -14,33 +14,6 @@ public class BubbleSpawn : MonoBehaviour
         BeatDetector.OnBeat += OnBeat; 
     }
 
-    void Update()
-    {
-        if (sucessor.successTap)
-        {
-            if (sucessor.fishSpawnCount == 2 && isSecondBubble)
-            {
-                BubblePop();
-            }
-            else if (sucessor.fishSpawnCount == 1 && !isSecondBubble)
-            {
-                BubblePop();
-            }
-        }
-        
-        if (sucessor.failTap)
-        {
-            if (sucessor.fishSpawnCount == 2 && isSecondBubble)
-            {
-                StartCoroutine(DissapearAfterDelay()); 
-            }
-            else if (sucessor.fishSpawnCount == 1 && !isSecondBubble)
-            {
-                StartCoroutine(DissapearAfterDelay()); 
-            }
-        }
-    }
-
     void OnBeat()
     {
         if (isSecondBubble)
@@ -69,7 +42,7 @@ public class BubbleSpawn : MonoBehaviour
         method();
     }
 
-    IEnumerator DissapearAfterDelay()
+    public IEnumerator DissapearAfterDelay()
     {
         yield return new WaitForSeconds(1f); // Wait for 1 second
         FadeOutBubble(); // Call FadeOutFish after the delay

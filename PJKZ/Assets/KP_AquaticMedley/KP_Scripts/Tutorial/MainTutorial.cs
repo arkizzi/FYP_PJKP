@@ -31,7 +31,7 @@ public class MainTutorial : MonoBehaviour
             markerCounter++;
             lastBeatTime = currentTime; 
             
-            if (!chirpsAndBeatsRunning && markerCounter >= 3 && checkPoints.correctCount < 6 && kiz.animTut.GetBool("KizLeave?")) 
+            if (!chirpsAndBeatsRunning && markerCounter >= 4 && checkPoints.correctCount < 6 && kiz.animTut.GetBool("KizLeave?")) 
             {
                 StartCoroutine(ChirpsAndBeats());
             }
