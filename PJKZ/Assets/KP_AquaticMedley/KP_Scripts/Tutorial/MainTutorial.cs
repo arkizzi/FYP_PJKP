@@ -13,6 +13,7 @@ public class MainTutorial : MonoBehaviour
     public AudioSource PenkieChirps;
     public AudioSource PopBeats;
     public CheckPointIndicators checkPoints;
+    public Animator LoadingAnimator;
     
     private int markerCounter = 1;
     private float lastBeatTime = 0f; 
@@ -50,7 +51,7 @@ public class MainTutorial : MonoBehaviour
             textprompter.enabled = false;
         }
 
-        if (textprompter.LineNoChecker == 2)
+        if (textprompter.textDisplayed && textprompter.LineNoChecker == 2)
         {
             StartCoroutine(SwitchScene("AquaticMedley"));
         }
@@ -86,7 +87,8 @@ public class MainTutorial : MonoBehaviour
 
     IEnumerator SwitchScene(string sceneName)
     {
-        yield return new WaitForSeconds(4.0f);
+        LoadingAnimator.SetBool("LeavingScene?", true);
+        yield return new WaitForSeconds(3.0f);
         SceneManager.LoadScene(sceneName);
     }
 

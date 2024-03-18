@@ -7,6 +7,7 @@ public class FishSpawn : MonoBehaviour
     public BubbleSpawn bubble;
     public Animator FishAnimator;
     public bool isSecondFish;
+    public bool isZapped;
     public PlayerInteracts sucessor;
     private Coroutine EntranceCoroutine;
 
@@ -83,6 +84,7 @@ public class FishSpawn : MonoBehaviour
 
     public void AnimateFishIn()
     {
+        FishAnimator.SetBool("FishZapped", false);
         FishAnimator.SetBool("GoodFishSuccess", false);
         FishAnimator.SetBool("GoodFishMiss", false);
         FishAnimator.SetBool("GoodFishAppears", true);
@@ -97,8 +99,16 @@ public class FishSpawn : MonoBehaviour
 
     public void GrowAndFadeOutFish()
     {
-        FishAnimator.SetBool("GoodFishSuccess", true);
-        FishAnimator.SetBool("GoodFishAppears", false);
+        if (isZapped)
+        {
+            FishAnimator.SetBool("FishZapped", true);
+            FishAnimator.SetBool("GoodFishAppears", false);
+        }
+        else
+        {
+            FishAnimator.SetBool("GoodFishSuccess", true);
+            FishAnimator.SetBool("GoodFishAppears", false);
+        }
         sucessor.successTap = false;
     }
 }

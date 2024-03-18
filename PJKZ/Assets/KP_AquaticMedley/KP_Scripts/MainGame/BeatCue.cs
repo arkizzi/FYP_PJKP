@@ -1,25 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BeatCue : MonoBehaviour
 {
     public SimpleBeatDetection BeatDetector;
     public ThoughtBox dialogueBox;
+    public GameObject dilogObj;
     public AudioSource Markers;
     public AudioSource PenkieChirps;
     public AudioSource PopBeats;
     public GameObject ZapBadFish;
     public GameObject ZapGoodFish;
     public GameObject PopFish;
+    public Animator angryPenkie;
+    public Animator LoadingAnimator;
     
-    private int markerCounter = 0;
+    public int markerCounter = 0;
+    public bool isntAngry = false;
     private float lastBeatTime = 0f; 
     private bool chirpsAndBeatsRunning = false; 
     private int RoundsPerSes;
 
     void Start()
     {
+        dilogObj.SetActive(false);
         Markers.Play();
         BeatDetector.OnBeat += OnBeat;
     }
@@ -27,12 +33,6 @@ public class BeatCue : MonoBehaviour
     void Update()
     {
         Debug.Log(markerCounter);
-        // Debug.Log(RoundsPerSes);
-        // if (RoundsPerSes == 2)
-        // {
-        //     RoundsPerSes = 0;
-        //     StartCoroutine(BringBackDialogueBox());
-        // }
     }
 
     void OnBeat()
@@ -40,10 +40,11 @@ public class BeatCue : MonoBehaviour
         float currentTime = Time.time;
         if (currentTime - lastBeatTime > 3f) 
         {
-            dialogueBox.gameObject.SetActive(false);
             markerCounter++;
             lastBeatTime = currentTime; 
+            dialogueBox.LineChanger();
             RemoveOrAddFish();
+            ThoughBoxProcesses();
 
             if (markerCounter == 5 || markerCounter == 6 || markerCounter == 9 || markerCounter == 10 || markerCounter == 13 || markerCounter == 14)
             {
@@ -58,24 +59,53 @@ public class BeatCue : MonoBehaviour
         {
             case 4:
                 ZapBadFish.SetActive(true);
+                dilogObj.SetActive(false);
                 break;
             case 8:
-                //Destroy(ZapBadFish);
                 ZapBadFish.SetActive(false);
                 ZapGoodFish.SetActive(true);
+                //dilogObj.SetActive(false);
+                break;
+            case 10:
+                dilogObj.SetActive(false);
                 break;
             case 12:
-                //Destroy(ZapGoodFish);
                 ZapGoodFish.SetActive(false);
                 PopFish.SetActive(true);
+                break;
+            case 14:
+                dilogObj.SetActive(false);
                 break;
         }
     }
 
-    IEnumerator BringBackDialogueBox()
+    public void ThoughBoxProcesses()
     {
-        yield return new WaitForSeconds(2f);
-        dialogueBox.gameObject.SetActive(true);
+        switch (markerCounter)
+        {
+            case 1:
+                dilogObj.SetActive(true);
+                break;
+            case 7:
+                dilogObj.SetActive(true);
+                break;
+            case 11:
+                dilogObj.SetActive(true);
+                angryPenkie.SetBool("IsNotAngry", true);
+                isntAngry = true;
+                break;
+            case 15:
+                StartCoroutine(SwitchToTitle("TitleScreen"));
+                break;
+        }
+    }
+
+    IEnumerator SwitchToTitle(string sceneName)
+    {
+        yield return new WaitForSeconds(5f);
+        LoadingAnimator.SetBool("LeavingScene?", true);
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene(sceneName);
     }
 
     IEnumerator ChirpsAndBeats()
@@ -85,7 +115,6 @@ public class BeatCue : MonoBehaviour
         StartCoroutine(PopTimer());
         StartCoroutine(disableAudio());
         yield return new WaitForSeconds(1.84f);
-        RoundsPerSes ++;
         chirpsAndBeatsRunning = false; 
     }
 

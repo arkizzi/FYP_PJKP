@@ -6,6 +6,7 @@ public class AngryPenkieChirpIndication : MonoBehaviour
 {
     public SimpleBeatDetection BeatDetector;
     public Animator animator;
+    public BeatCue bq;
     private Coroutine Anim1Coroutine;
 
     void Start()
@@ -15,11 +16,23 @@ public class AngryPenkieChirpIndication : MonoBehaviour
 
     void OnBeat()
     {
-        animator.SetBool("AngryAttacking", true); //trigger animation for beat detection 1
-        if (Anim1Coroutine != null)
-            StopCoroutine(Anim1Coroutine);
+        if (bq.isntAngry)
+        {
+            animator.SetBool("IsDoubleChriping", true); //trigger animation for beat detection 1
+            if (Anim1Coroutine != null)
+                StopCoroutine(Anim1Coroutine);
 
-        Anim1Coroutine = StartCoroutine(ResetAnimation("AngryAttacking"));
+            Anim1Coroutine = StartCoroutine(ResetAnimation("IsDoubleChriping"));
+        }
+        else
+        {
+            animator.SetBool("AngryAttacking", true); //trigger animation for beat detection 1
+            if (Anim1Coroutine != null)
+                StopCoroutine(Anim1Coroutine);
+
+            Anim1Coroutine = StartCoroutine(ResetAnimation("AngryAttacking"));
+        }
+
     }
 
 

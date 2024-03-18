@@ -7,6 +7,7 @@ public class ThoughtBox : MonoBehaviour
 {
     private bool displayedTextFin = false;
     public Text text;
+    public BeatCue bq;
     private string Lines;
     private int LineNoChecker = 0;
     public Animator animator;
@@ -19,26 +20,20 @@ public class ThoughtBox : MonoBehaviour
 
     void OnEnable()
     {
-        animator.SetBool("IsLeaving?", false);
-        disabler = false;
         //LineNoChecker ++;
         LineChanger();
+        StartCoroutine(AddIntoScene());
     }
 
     void Update()
     {
-        Debug.Log(LineNoChecker);
-        if (displayedTextFin)
-        {
-            LineNoChecker ++;
-            displayedTextFin = false;
-            LineChanger();
-        }
+        //Debug.Log(LineNoChecker);
+        //LineChanger();
     }
 
-    void LineChanger()
+    public void LineChanger()
     {
-        switch (LineNoChecker)
+        switch (bq.markerCounter)
         {
             case 1:
                 Lines = "Penkie is ANGRY! Penkie is going to HURT ALL fish!";
@@ -49,12 +44,21 @@ public class ThoughtBox : MonoBehaviour
                 StartCoroutine(TypeWriterProcess(Lines));
                 StartCoroutine(RemoveFromScene());
                 break;
-            case 3:
-                Lines = "WHY do i hurt the fish? Did they hurt me?";
+            case 7:
+                Lines = "WHY do I hurt them when I'm angry?";
                 StartCoroutine(TypeWriterProcess(Lines));
                 break;
-            case 4:
-                Lines = "Is it BAD to hurt the fish when I'm angry?";
+            case 8:
+                Lines = "Is it WRONG for me to hurt them?";
+                StartCoroutine(TypeWriterProcess(Lines));
+                StartCoroutine(RemoveFromScene());
+                break;
+            case 11:
+                Lines = "Penkie shouldn't hurt the Fish...";
+                StartCoroutine(TypeWriterProcess(Lines));
+                break;
+            case 12:
+                Lines = "Penkie will BE NICE to them now!";
                 StartCoroutine(TypeWriterProcess(Lines));
                 StartCoroutine(RemoveFromScene());
                 break;
@@ -70,13 +74,26 @@ public class ThoughtBox : MonoBehaviour
             text.text += letter;
             yield return new WaitForSeconds(0.04f);
         }
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(1f);
         displayedTextFin = true;
+    }
+
+        IEnumerator AddIntoScene()
+    {
+        yield return new WaitForSeconds(1f);
+        animator.SetBool("IsEntering?", true);
     }
 
     IEnumerator RemoveFromScene()
     {
-        yield return new WaitForSeconds(5f);
+        if (bq.markerCounter == 2)
+        {
+            yield return new WaitForSeconds(5f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(3f);
+        }
         animator.SetBool("IsLeaving?", true);
         disabler = true;
     }
