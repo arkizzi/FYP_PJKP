@@ -80,7 +80,7 @@ public class MainTutorial : MonoBehaviour
 
     IEnumerator disableAudio()
     {
-        yield return new WaitForSeconds(1.00f);
+        yield return new WaitForSeconds(3.00f);
         PenkieChirps.enabled = false;
         PopBeats.enabled = false;
     }

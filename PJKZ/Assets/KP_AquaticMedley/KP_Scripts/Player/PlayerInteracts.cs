@@ -39,7 +39,7 @@ public class PlayerInteracts : MonoBehaviour
         {
             time_after_beat += Time.deltaTime;
 
-            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) 
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began|| Input.GetMouseButtonDown(0)) 
             {
                 if (time_after_beat < max_time_before_best)
                 {
